@@ -3,11 +3,13 @@ import "./App.css";
 import CounterComponent from "./components/CounterComponent";
 import FlagComponent from "./components/FlagComponent";
 import GuessComponent from "./components/GuessComponent";
+import SolutionComponent from "./components/SolutionComponent";
 import data from "./countries.json";
 
 function App() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+  const [solution, setSolution] = useState("");
 
   const countries = data.countries;
   const keys = Object.keys(countries);
@@ -17,7 +19,6 @@ function App() {
     let randomEntries = [];
     for (let i = 0; i < 4; i++) {
       const randomIndex = Math.floor(Math.random() * keys.length);
-      console.log(randomIndex);
       randomEntries.push(randomIndex);
     }
     return randomEntries;
@@ -34,8 +35,7 @@ function App() {
   const handleButtonClick = (buttonLabel) => {
     if (countryName === buttonLabel) setCorrectAnswers(correctAnswers + 1);
     else setIncorrectAnswers(incorrectAnswers + 1);
-
-    console.log(correctAnswers, incorrectAnswers);
+    setSolution(buttonLabel);
   };
 
   return (
@@ -45,6 +45,7 @@ function App() {
         correctAnswers={correctAnswers}
         incorrectAnswers={incorrectAnswers}
       />
+      <SolutionComponent solution={solution} />
       <GuessComponent
         buttonLabels={countryNames}
         onButtonClick={handleButtonClick}
