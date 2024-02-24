@@ -9,7 +9,6 @@ import data from "./countries.json";
 function App() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
-  const [solution, setSolution] = useState("");
 
   const countries = data.countries;
   const keys = Object.keys(countries);
@@ -24,7 +23,7 @@ function App() {
     return randomEntries;
   };
 
-  const randomEntries = getRandomEntries();
+  const [randomEntries, setRandomEntries] = useState(getRandomEntries());
 
   const countryNames = randomEntries.map((index) => values[index]);
   const countryCodes = randomEntries.map((index) => keys[index]);
@@ -32,23 +31,24 @@ function App() {
   const countryCode = countryCodes[randomIndex];
   const countryName = countryNames[randomIndex];
 
-  const handleButtonClick = (buttonLabel) => {
-    if (countryName === buttonLabel) setCorrectAnswers(correctAnswers + 1);
+  const evaluate = (isCorrect) => {
+    if (isCorrect) setCorrectAnswers(correctAnswers + 1);
     else setIncorrectAnswers(incorrectAnswers + 1);
-    setSolution(buttonLabel);
+    setRandomEntries(getRandomEntries());
   };
 
   return (
     <div>
-      <FlagComponent countryCode={countryCode} />
+      <FlagComponent countryCode={countryCode} correctGuess={true} />
+      {/* <SolutionComponent solution={solution} /> */}
       <CounterComponent
         correctAnswers={correctAnswers}
         incorrectAnswers={incorrectAnswers}
       />
-      <SolutionComponent solution={solution} />
       <GuessComponent
         buttonLabels={countryNames}
-        onButtonClick={handleButtonClick}
+        onGuess={evaluate}
+        solution={countryName}
       />
     </div>
   );
