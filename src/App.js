@@ -7,6 +7,7 @@ import GuessComponent from "./components/GuessComponent";
 import SolutionComponent from "./components/SolutionComponent";
 import getCountry from "./hooks/getCountry";
 import SignIn from "./components/signin/SignIn";
+import SignUp from "./components/signup/SignUp";
 
 function App() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -41,6 +42,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route
           path="/funwithflags"
           element={
