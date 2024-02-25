@@ -2,12 +2,9 @@
 import React from "react";
 import Card from "@mui/material/Card";
 
-const FlagComponent = ({ countryCode, isCorrect }) => {
-  // const countryCode = "af";
-  // const link = `https://www.worldometers.info/img/flags/${countryCode}-flag.gif`;
-
+const FlagComponent = ({ countryCode, isCorrectGuess }) => {
   const link = `https://flagcdn.com/w320/${countryCode}.png`;
-
+  console.log("flagcomponent");
   return (
     <div
       style={{
@@ -19,7 +16,9 @@ const FlagComponent = ({ countryCode, isCorrect }) => {
     >
       <Card
         style={
-          isCorrect
+          isCorrectGuess === null
+            ? { boxShadow: "0px 0px 0.5em 0.7em white" }
+            : isCorrectGuess
             ? { boxShadow: "0px 0px 0.5em 0.7em green" }
             : { boxShadow: "0px 0px 0.5em 0.7em red" }
         }

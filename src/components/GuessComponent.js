@@ -2,26 +2,21 @@ import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 
-const GuessComponent = ({ buttonLabels, onGuess, solution }) => {
-  const [clicked, guessTaken] = useState(false);
+const GuessComponent = ({ buttonLabels, onClick, solution, showingResult }) => {
+  const [clicked, setClicked] = useState(false);
 
   const guessedCorrect = (isCorrect) => {
-    onGuess(isCorrect);
+    onClick(isCorrect);
   };
 
   const onBtnClick = (label) => {
-    guessTaken(true);
-    delaySetClicked(label);
+    setClicked(true);
+    onClick(label);
   };
-  const delaySetClicked = (label) => {
-    setTimeout(() => {
-      guessTaken(false);
-      guessedCorrect(label === solution);
-    }, 1000);
-  };
+
   return (
     <div style={{ padding: "5em" }}>
-      {!clicked ? (
+      {!showingResult ? (
         <Grid container spacing={2}>
           {buttonLabels.map((label, index) => (
             <Grid item xs={6} key={index}>

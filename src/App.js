@@ -1,54 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import CounterComponent from "./components/CounterComponent";
 import FlagComponent from "./components/FlagComponent";
 import GuessComponent from "./components/GuessComponent";
 import SolutionComponent from "./components/SolutionComponent";
-import data from "./countries.json";
+import getCountry from "./hooks/getCountry";
 
 function App() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+  const [isCorrectGuess, setIsCorrectGuess] = useState(null);
+  const [showingResult, setShowingResult] = useState(false);
 
-  const countries = data.countries;
-  const keys = Object.keys(countries);
-  const values = Object.values(countries);
+  const [country, setCountry] = useState(getCountry());
 
-  const getRandomEntries = () => {
-    let randomEntries = [];
-    for (let i = 0; i < 4; i++) {
-      const randomIndex = Math.floor(Math.random() * keys.length);
-      randomEntries.push(randomIndex);
-    }
-    return randomEntries;
+  useEffect(() => {
+    setCountry(getCountry());
+  }, [correctAnswers, incorrectAnswers]);
+
+  const evaluate = (answer) => {
+    setShowingResult(true);
+    const isCorrect = answer === country.countryName;
+    setIsCorrectGuess(isCorrect);
+
+    delaySetClicked(isCorrect);
   };
 
-  const [randomEntries, setRandomEntries] = useState(getRandomEntries());
-
-  const countryNames = randomEntries.map((index) => values[index]);
-  const countryCodes = randomEntries.map((index) => keys[index]);
-  const randomIndex = Math.floor(Math.random() * 4);
-  const countryCode = countryCodes[randomIndex];
-  const countryName = countryNames[randomIndex];
-
-  const evaluate = (isCorrect) => {
-    if (isCorrect) setCorrectAnswers(correctAnswers + 1);
-    else setIncorrectAnswers(incorrectAnswers + 1);
-    setRandomEntries(getRandomEntries());
+  const delaySetClicked = (isCorrect) => {
+    setTimeout(() => {
+      if (isCorrect) setCorrectAnswers(correctAnswers + 1);
+      else setIncorrectAnswers(incorrectAnswers + 1);
+      setShowingResult(false);
+      setIsCorrectGuess(null);
+    }, 1000);
   };
 
   return (
     <div>
-      <FlagComponent countryCode={countryCode} correctGuess={true} />
-      {/* <SolutionComponent solution={solution} /> */}
+      <FlagComponent
+        countryCode={country.countryCode}
+        isCorrectGuess={isCorrectGuess}
+      />
+      <SolutionComponent solution={country.countryName} />
       <CounterComponent
         correctAnswers={correctAnswers}
         incorrectAnswers={incorrectAnswers}
       />
       <GuessComponent
-        buttonLabels={countryNames}
-        onGuess={evaluate}
-        solution={countryName}
+        buttonLabels={country.countryNames}
+        onClick={evaluate}
+        solution={country.countryName}
+        showingResult={showingResult}
       />
     </div>
   );
