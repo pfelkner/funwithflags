@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CounterComponent from "./components/CounterComponent";
 import FlagComponent from "./components/FlagComponent";
 import GuessComponent from "./components/GuessComponent";
 import SolutionComponent from "./components/SolutionComponent";
 import getCountry from "./hooks/getCountry";
+import SignIn from "./components/signin/SignIn";
 
 function App() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -36,23 +38,33 @@ function App() {
   };
 
   return (
-    <div>
-      <FlagComponent
-        countryCode={country.countryCode}
-        isCorrectGuess={isCorrectGuess}
-      />
-      <SolutionComponent solution={country.countryName} />
-      <CounterComponent
-        correctAnswers={correctAnswers}
-        incorrectAnswers={incorrectAnswers}
-      />
-      <GuessComponent
-        buttonLabels={country.countryNames}
-        onClick={evaluate}
-        solution={country.countryName}
-        showingResult={showingResult}
-      />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<SignIn />} />
+        <Route
+          path="/funwithflags"
+          element={
+            <div>
+              <FlagComponent
+                countryCode={country.countryCode}
+                isCorrectGuess={isCorrectGuess}
+              />
+              <SolutionComponent solution={country.countryName} />
+              <CounterComponent
+                correctAnswers={correctAnswers}
+                incorrectAnswers={incorrectAnswers}
+              />
+              <GuessComponent
+                buttonLabels={country.countryNames}
+                onClick={evaluate}
+                solution={country.countryName}
+                showingResult={showingResult}
+              />
+            </div>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
