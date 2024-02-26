@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Copyright(props) {
   return (
@@ -36,6 +37,12 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
+const apiCall = () => {
+  axios.get("http://localhost:8081").then((data) => {
+    console.log(data);
+  });
+};
+
 export default function SignIn() {
   const navigate = useNavigate();
   const handleSubmit = (event) => {
@@ -45,6 +52,7 @@ export default function SignIn() {
       email: data.get("email"),
       password: data.get("password"),
     });
+    apiCall();
     navigate("/funwithflags");
   };
 
@@ -103,6 +111,15 @@ export default function SignIn() {
               sx={{ mt: 3, mb: 2 }}
             >
               Sign In
+            </Button>
+            <Button
+              onClick={apiCall}
+              fullWidth
+              variant="contained"
+              color="warning"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Make API Call
             </Button>
             <Grid container>
               <Grid item xs>
