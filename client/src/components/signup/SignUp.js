@@ -45,14 +45,17 @@ export default function SignUp() {
       password: data.get("password"),
     };
     console.log(userData);
-    axios
-      .post("http://localhost:8081", userData)
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    // axios
+    //   .post("http://localhost:8081", userData)
+    //   .then((data) => {
+    //     console.log(data);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+    axios.get("http://localhost:8081").then((data) => {
+      console.log(data);
+    });
   };
 
   return (
