@@ -38,9 +38,13 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 const apiCall = () => {
-  axios.get("http://localhost:8081").then((data) => {
-    console.log(data);
-  });
+  // axios.get("http://localhost:8080").then((data) => {
+  //   console.log(data);
+  // });
+  // };
+  fetch("http://localhost:8080")
+    .then((response) => response.json())
+    .then((data) => console.log(data));
 };
 
 export default function SignIn() {
