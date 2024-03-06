@@ -41,8 +41,9 @@ export default function SignUp() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const userData = {
-      email: data.get("email"),
-      password: data.get("password"),
+      // email: data.get("email"),
+      // password: data.get("password"),
+      name: data.get("firstName"),
     };
     console.log(userData);
     // axios
@@ -53,7 +54,10 @@ export default function SignUp() {
     //   .catch((error) => {
     //     console.error(error);
     //   });
-    axios.get("http://localhost:8081").then((data) => {
+    // axios.get("http://localhost:4000").then((data) => {
+    //   console.log(data);
+    // });
+    axios.post("http://localhost:4000", userData).then((data) => {
       console.log(data);
     });
   };
