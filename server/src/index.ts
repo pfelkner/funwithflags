@@ -1,57 +1,67 @@
-// const User = require("../db.js");
+// import express from "express";
+// import * as trpcExpress from "@trpc/server/adapters/express";
+// import { appRouter } from "./routers/_app";
 
-// import express, { Express, Request, Response } from "express";
 // const app = express();
-// const cors = require("cors");
 
-// app.use(cors());
+// app.use(
+//   "/trpc",
+//   trpcExpress.createExpressMiddleware({
+//     router: appRouter,
+//     createContext: () => ({}), // Create context for each request
+//   }),
+// );
+
+// app.listen(4000);
+// console.log("Server listening on http://localhost:4000");
+
+// import { initTRPC } from "@trpc/server";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import express from "express";
+// import { appRouter } from "./routers/_app";
+import { Prisma, PrismaClient } from "@prisma/client";
+import * as cors from "cors";
+const prisma = new PrismaClient();
+
+// // created for each request
+// const createContext = ({
+//   req,
+//   res,
+// }: trpcExpress.CreateExpressContextOptions) => ({}); // no context
+// type Context = Awaited<ReturnType<typeof createContext>>;
+
+// const t = initTRPC.context<Context>().create();
+// const router = appRouter;
+
+const app = express();
+app.use(cors.default);
+app.listen(4000, () => {
+  console.log(`[server]: Server is running at http://localhost:${4000}`);
+});
 // app.use(express.json());
 
-// app.listen(8081, () => {
-//   console.log("Server is running on port 8081");
-// });
-
-// User.sequelize.sync().then(() => {
-//   app.get("/", async (req, res) => {
-//     const ado = await User.create({
-//       username: "Paul",
-//       password: "Cee",
-//     });
-//     const users = await User.findAll();
-//     res.send(users);
-//   });
-
-//   app.post("/", async (req, res) => {
-//     const user = User.findOne({ where: { username: req.body.email } }).then(
-//       async (user) => {
-//         if (user) {
-//           throw new Error("User already exists");
-//         } else {
-//           const newUser = await User.create({
-//             username: req.body.email,
-//             password: req.body.password,
-//           });
-//           return newUser;
-//         }
-//       }
-//     );
-
-//     res.send(user);
-//   });
-// });
-import express, { Express, Request, Response } from "express";
-import * as cors from "cors";
-// import User from "../db.js";
-
-const app: Express = express();
-app.use(cors.default());
-app.use(express.json());
-const port = 8081;
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+app.get("/", async (req, res) => {
+  const users = await prisma.user.findMany();
+  console.log("users:", users);
+  res.json(users);
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+app.post("/", async (req, res) => {
+  console.log(req.body);
+  const user = await prisma.user.create({
+    data: {
+      name: "Alice",
+    },
+  });
+  // const users = await prisma.user.findMany();
+  // console.log("users:", users);
+  res.json(user);
 });
+
+// app.use(
+//   "/trpc",
+//   trpcExpress.createExpressMiddleware({
+//     router: appRouter,
+//     createContext,
+//   })
+// );
