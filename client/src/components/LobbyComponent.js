@@ -7,7 +7,7 @@ import axios from "axios";
 function LobbyComponent() {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  const [leader, setLeader] = useState(null);
+  const [leaders, setLeader] = useState(null);
 
   const handlePlayClick = () => {
     navigate("/funwithflags");
@@ -17,17 +17,12 @@ function LobbyComponent() {
     const fetchData = async () => {
       const users = await axios.get("http://localhost:8080/user");
       const scores = await axios.get("http://localhost:8080/score");
-      const highscore = scores.data.sort(
-        (a, b) => b.highestStreak - a.highestStreak
-      )[0];
-      const highscoreUser = users.data.find((u) => u.id === highscore.userId);
-      console.log(highscoreUser.name);
-      console.log(highscore.highestStreak);
-      const leader = {
-        name: highscoreUser.name,
-        streak: highscore.highestStreak,
-      };
-      setLeader(leader);
+      const highscores = scores.data.slice(0, 3);
+      const leaders = highscores.map((score) => {
+        const user = users.data.find((u) => u.id === score.userId);
+        return { name: user.name, streak: score.highestStreak };
+      });
+      setLeader(leaders);
     };
     fetchData();
   }, []);
@@ -43,11 +38,14 @@ function LobbyComponent() {
       }}
     >
       <h1>Welcome {user?.name} to the Flag Guessing Game!</h1>
-      {leader ? (
-        <h2>
-          Current leader is {leader.name} with a streak of {leader.streak}
-        </h2>
-      ) : null}
+      {leaders
+        ? leaders.map((leader, index) => (
+            <h2 key={index}>
+              {index + 1}. place: {leader.name} with a streak of&nbsp;
+              {leader.streak}
+            </h2>
+          ))
+        : null}
       <Button variant="contained" color="primary" onClick={handlePlayClick}>
         Play
       </Button>

@@ -97,7 +97,6 @@ function App() {
                   streakCount={streakCount}
                   highestStreak={highestStreak}
                 />
-                {user?.name}
                 <GuessComponent
                   buttonLabels={country.countryNames}
                   onClick={evaluate}
