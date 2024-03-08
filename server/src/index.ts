@@ -18,10 +18,15 @@ app.get("/", async (req, res) => {
   res.json(users);
 });
 
-app.post("/", async (req, res) => {
+app.post("/signup", async (req, res) => {
   const name = req.body.name;
+  const users = await prisma.user.findMany();
   if (!name) {
     res.status(400).send("Name is required");
+    return;
+  }
+  if (users.find((user) => user.name === name)) {
+    res.status(400).send("Name already exists");
     return;
   }
   const user = await prisma.user.create({
@@ -29,5 +34,19 @@ app.post("/", async (req, res) => {
       name: name,
     },
   });
+  res.send(user);
+});
+
+app.post("/sigin", async (req, res) => {
+  const userName = req.body.name;
+  const users = await prisma.user.findMany();
+  const user = users.find((user) => user.name === userName);
+  console.log("userName", userName);
+  console.log("user", user);
+  if (!user) {
+    res.status(400).send("User not found");
+    return;
+  }
+
   res.send(user);
 });
