@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -37,27 +37,29 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-const apiCall = () => {
-  // axios.get("http://localhost:8080").then((data) => {
-  //   console.log(data);
-  // });
-  // };
-  fetch("http://localhost:8080")
-    .then((response) => response.json())
-    .then((data) => console.log(data));
-};
-
 export default function SignIn() {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("");
+
+  const handleUserNameChange = (event) => {
+    setUserName(event.target.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-    apiCall();
-    navigate("/funwithflags");
+    const userData = {
+      name: data.get("userName"),
+    };
+    axios
+      .post("http://localhost:8080/sigin", userData)
+      .then((data) => {
+        console.log(data);
+        navigate("/funwithflags");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -85,14 +87,15 @@ export default function SignIn() {
             sx={{ mt: 1 }}
           >
             <TextField
-              margin="normal"
+              autoComplete="given-name"
+              name="userName"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="userName"
+              label="Username"
               autoFocus
+              value={userName}
+              onChange={handleUserNameChange}
             />
             <TextField
               margin="normal"
@@ -113,17 +116,9 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={!userName}
             >
               Sign In
-            </Button>
-            <Button
-              onClick={apiCall}
-              fullWidth
-              variant="contained"
-              color="warning"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Make API Call
             </Button>
             <Grid container>
               <Grid item xs>

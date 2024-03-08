@@ -11,6 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Copyright(props) {
@@ -37,6 +38,7 @@ const defaultTheme = createTheme();
 
 export default function SignUp() {
   const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
 
   const handleUserNameChange = (event) => {
     setUserName(event.target.value);
@@ -50,9 +52,15 @@ export default function SignUp() {
     };
     console.log(userData);
 
-    axios.post("http://localhost:8080", userData).then((data) => {
-      console.log(data);
-    });
+    axios
+      .post("http://localhost:8080/signup", userData)
+      .then((data) => {
+        console.log(data);
+        navigate("/funwithflags");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
