@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CounterComponent from "./components/CounterComponent";
@@ -15,10 +15,18 @@ function App() {
   const [isCorrectGuess, setIsCorrectGuess] = useState(null);
   const [showingResult, setShowingResult] = useState(false);
 
-  const [country, setCountry] = useState(getCountry());
+  const [country, setCountry] = useState(() => getCountry());
+  const initialMount = useRef(true);
 
+  // useEffect(() => {
+  //   setCountry(getCountry());
+  // }, [correctAnswers, incorrectAnswers]);
   useEffect(() => {
-    setCountry(getCountry());
+    if (initialMount.current) {
+      initialMount.current = false;
+    } else {
+      setCountry(getCountry());
+    }
   }, [correctAnswers, incorrectAnswers]);
 
   const evaluate = (answer) => {
@@ -31,8 +39,8 @@ function App() {
 
   const delaySetClicked = (isCorrect) => {
     setTimeout(() => {
-      if (isCorrect) setCorrectAnswers(correctAnswers + 1);
-      else setIncorrectAnswers(incorrectAnswers + 1);
+      if (isCorrect) setCorrectAnswers((prev) => prev + 1);
+      else setIncorrectAnswers((prev) => prev + 1);
       setShowingResult(false);
       setIsCorrectGuess(null);
     }, 1000);
