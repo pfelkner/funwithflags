@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mui/icons-material": "^5.15.12",
     "@prisma/client": "^5.10.2",
     "@trpc/server": "^10.45.1",
     "cors": "^2.8.5",

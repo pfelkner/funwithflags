@@ -4,31 +4,41 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CounterComponent from "./components/CounterComponent";
 import FlagComponent from "./components/FlagComponent";
 import GuessComponent from "./components/GuessComponent";
-import SolutionComponent from "./components/SolutionComponent";
+import StreakComponent from "./components/StreakComponent";
 import getCountry from "./hooks/getCountry";
 import SignIn from "./components/signin/SignIn";
 import SignUp from "./components/signup/SignUp";
+import LobbyComponent from "./components/LobbyComponent";
+import UserContext from "./context/UserContext";
 
 function App() {
+  const [user, setUser] = useState(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
   const [isCorrectGuess, setIsCorrectGuess] = useState(null);
+  const [accuracy, setAccuracy] = useState(0);
+
   const [showingResult, setShowingResult] = useState(false);
 
   const [streakCount, setStreakcount] = useState(0);
+  const [highestStreak, setHighestStreak] = useState(0);
 
   const [country, setCountry] = useState(() => getCountry());
   const initialMount = useRef(true);
 
-  // useEffect(() => {
-  //   setCountry(getCountry());
-  // }, [correctAnswers, incorrectAnswers]);
   useEffect(() => {
     if (initialMount.current) {
       initialMount.current = false;
     } else {
       setCountry(getCountry());
     }
+  }, [correctAnswers, incorrectAnswers]);
+
+  useEffect(() => {
+    const totalAttempts = correctAnswers + incorrectAnswers;
+    const newAccuracy =
+      totalAttempts > 0 ? (correctAnswers / totalAttempts) * 100 : 0;
+    setAccuracy(newAccuracy);
   }, [correctAnswers, incorrectAnswers]);
 
   const evaluate = (answer) => {
@@ -43,47 +53,63 @@ function App() {
     setTimeout(() => {
       if (isCorrect) {
         setCorrectAnswers((prev) => prev + 1);
-        setStreakcount((prev) => prev + 1);
+        setStreakcount((prev) => {
+          const newStreakCount = prev + 1;
+          // Use the newStreakCount directly to check against highestStreak
+          if (newStreakCount > highestStreak) {
+            setHighestStreak(newStreakCount);
+          }
+          return newStreakCount;
+        });
       } else {
         setIncorrectAnswers((prev) => prev + 1);
         setStreakcount(0);
       }
 
+      // axios.post
       setShowingResult(false);
       setIsCorrectGuess(null);
     }, 1000);
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route
-          path="/funwithflags"
-          element={
-            <div>
-              <FlagComponent
-                countryCode={country.countryCode}
-                isCorrectGuess={isCorrectGuess}
-              />
-              {/* <SolutionComponent solution={country.countryName} /> */}
-              <CounterComponent
-                correctAnswers={correctAnswers}
-                incorrectAnswers={incorrectAnswers}
-                streakCount={streakCount}
-              />
-              <GuessComponent
-                buttonLabels={country.countryNames}
-                onClick={evaluate}
-                solution={country.countryName}
-                showingResult={showingResult}
-              />
-            </div>
-          }
-        />
-      </Routes>
-    </Router>
+    <UserContext.Provider value={{ user, setUser }}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/lobby" element={<LobbyComponent />} />
+          <Route
+            path="/funwithflags"
+            element={
+              <div>
+                <FlagComponent
+                  countryCode={country.countryCode}
+                  isCorrectGuess={isCorrectGuess}
+                />
+                {/* <SolutionComponent solution={country.countryName} /> */}
+                <CounterComponent
+                  correctAnswers={correctAnswers}
+                  incorrectAnswers={incorrectAnswers}
+                  accuracy={accuracy.toFixed(2)}
+                />
+                <StreakComponent
+                  streakCount={streakCount}
+                  highestStreak={highestStreak}
+                />
+                {user?.name}
+                <GuessComponent
+                  buttonLabels={country.countryNames}
+                  onClick={evaluate}
+                  solution={country.countryName}
+                  showingResult={showingResult}
+                />
+              </div>
+            }
+          />
+        </Routes>
+      </Router>
+    </UserContext.Provider>
   );
 }
 

@@ -1,6 +1,7 @@
 import express from "express";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, Score } from "@prisma/client";
 import cors = require("cors");
+import { update } from "lodash";
 const prisma = new PrismaClient();
 
 const app = express();
@@ -11,7 +12,7 @@ app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
-app.get("/", async (req, res) => {
+app.get("/user", async (req, res) => {
   console.log("get request at /");
   const users = await prisma.user.findMany();
   console.log("users:", users);
@@ -20,24 +21,22 @@ app.get("/", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   const name = req.body.name;
+  const password = req.body.password;
   const users = await prisma.user.findMany();
-  if (!name) {
-    res.status(400).send("Name is required");
-    return;
-  }
   if (users.find((user) => user.name === name)) {
     res.status(400).send("Name already exists");
     return;
   }
   const user = await prisma.user.create({
     data: {
-      name: name,
+      name,
+      password,
     },
   });
-  res.send(user);
+  res.send(user.name);
 });
 
-app.post("/sigin", async (req, res) => {
+app.post("/signin", async (req, res) => {
   const userName = req.body.name;
   const users = await prisma.user.findMany();
   const user = users.find((user) => user.name === userName);
@@ -47,6 +46,45 @@ app.post("/sigin", async (req, res) => {
     res.status(400).send("User not found");
     return;
   }
+  if (user.password !== req.body.password) {
+    res.status(400).send("Wrong password");
+    return;
+  }
 
   res.send(user);
 });
+
+app.post("/score/update", async (req, res) => {
+  const userId = req.body.userId;
+  const newScore = req.body.highestStreak;
+  const userScore = await getPlayerScore(userId);
+  if (userScore.highestStreak! < newScore) {
+    // cant be null due to implementaton of getPlayerScore
+    const updatedScore = await prisma.score.update({
+      where: { userId: userId },
+      data: { highestStreak: newScore },
+    });
+  }
+
+  res.send("Score updated");
+});
+
+app.get("/score", async (req, res) => {
+  const scores = await prisma.score.findMany();
+  res.json(scores);
+});
+
+const getPlayerScore = async (userId: number) => {
+  const score = await prisma.score.findFirst({
+    where: { userId: userId },
+  });
+  if (!score) {
+    return await prisma.score.create({
+      data: {
+        userId: userId,
+        highestStreak: 0,
+      },
+    });
+  }
+  return score;
+};

@@ -17,10 +17,10 @@ const FlagComponent = ({ countryCode, isCorrectGuess }) => {
       <Card
         style={
           isCorrectGuess === null
-            ? { boxShadow: "0px 0px 0.5em 0.7em grey" }
+            ? { boxShadow: "0px 0px 2em 2em rgba(128, 128, 128, 0.4)" } // Even lighter and wider grey shadow
             : isCorrectGuess
-              ? { boxShadow: "0px 0px 0.5em 0.7em green" }
-              : { boxShadow: "0px 0px 0.5em 0.7em red" }
+            ? { boxShadow: "0px 0px 2em 2em rgba(0, 128, 0, 0.5)" } // Even lighter and wider green shadow
+            : { boxShadow: "0px 0px 2em 2em rgba(255, 0, 0, 0.5)" } // Even lighter and wider red shadow
         }
       >
         <img

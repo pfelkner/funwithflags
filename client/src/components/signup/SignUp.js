@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,7 +12,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../../context/UserContext";
 import axios from "axios";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 function Copyright(props) {
   return (
@@ -39,6 +42,9 @@ const defaultTheme = createTheme();
 export default function SignUp() {
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
 
   const handleUserNameChange = (event) => {
     setUserName(event.target.value);
@@ -49,17 +55,26 @@ export default function SignUp() {
     const data = new FormData(event.currentTarget);
     const userData = {
       name: data.get("userName"),
+      password: data.get("password"),
     };
     console.log(userData);
 
     axios
       .post("http://localhost:8080/signup", userData)
-      .then((data) => {
-        console.log(data);
-        navigate("/funwithflags");
+      .then((resp) => {
+        setUser(resp.data);
+
+        setOpenSuccess(true);
+        setTimeout(() => {
+          navigate("/lobby");
+          setOpenSuccess(false);
+        }, 1500);
       })
       .catch((error) => {
-        console.log(error);
+        setOpenError(true);
+        setTimeout(() => {
+          setOpenError(false);
+        }, 1000);
       });
   };
 
@@ -81,6 +96,12 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
+          <Snackbar open={openSuccess} autoHideDuration={1000}>
+            <Alert severity="success">Welcome {userName}!</Alert>
+          </Snackbar>
+          <Snackbar open={openError} autoHideDuration={1000}>
+            <Alert severity="error">Incorrect username or password!</Alert>
+          </Snackbar>
           <Box
             component="form"
             noValidate
