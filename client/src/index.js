@@ -10,13 +10,9 @@ import reportWebVitals from "./reportWebVitals";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 // const queryClient = new QueryClient();
 root.render(
-  <React.StrictMode>
-    {/* <QueryClientProvider client={queryClient}>
-      <trpc.Provider queryClient={queryClient} url="http://localhost:4000/trpc"> */}
-    <App />
-    {/* </trpc.Provider>
-    </QueryClientProvider> */}
-  </React.StrictMode>
+  // <React.StrictMode>
+  <App />
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
