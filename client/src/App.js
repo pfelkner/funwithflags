@@ -15,6 +15,8 @@ function App() {
   const [isCorrectGuess, setIsCorrectGuess] = useState(null);
   const [showingResult, setShowingResult] = useState(false);
 
+  const [streakCount, setStreakcount] = useState(0);
+
   const [country, setCountry] = useState(() => getCountry());
   const initialMount = useRef(true);
 
@@ -39,8 +41,14 @@ function App() {
 
   const delaySetClicked = (isCorrect) => {
     setTimeout(() => {
-      if (isCorrect) setCorrectAnswers((prev) => prev + 1);
-      else setIncorrectAnswers((prev) => prev + 1);
+      if (isCorrect) {
+        setCorrectAnswers((prev) => prev + 1);
+        setStreakcount((prev) => prev + 1);
+      } else {
+        setIncorrectAnswers((prev) => prev + 1);
+        setStreakcount(0);
+      }
+
       setShowingResult(false);
       setIsCorrectGuess(null);
     }, 1000);
@@ -59,10 +67,11 @@ function App() {
                 countryCode={country.countryCode}
                 isCorrectGuess={isCorrectGuess}
               />
-              <SolutionComponent solution={country.countryName} />
+              {/* <SolutionComponent solution={country.countryName} /> */}
               <CounterComponent
                 correctAnswers={correctAnswers}
                 incorrectAnswers={incorrectAnswers}
+                streakCount={streakCount}
               />
               <GuessComponent
                 buttonLabels={country.countryNames}
