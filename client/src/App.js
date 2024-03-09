@@ -10,6 +10,10 @@ import SignIn from "./components/signin/SignIn";
 import SignUp from "./components/signup/SignUp";
 import LobbyComponent from "./components/LobbyComponent";
 import UserContext from "./context/UserContext";
+import { pickCountries, pickCountry } from "./hooks/rankCountries";
+import test from "./hooks/rankCountries";
+import axios from "axios";
+import { set } from "lodash";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -26,13 +30,34 @@ function App() {
   const [country, setCountry] = useState(() => getCountry());
   const initialMount = useRef(true);
 
-  useEffect(() => {
-    if (initialMount.current) {
-      initialMount.current = false;
-    } else {
-      setCountry(getCountry());
-    }
-  }, [correctAnswers, incorrectAnswers]);
+  const _getCountry = () => {
+    axios
+      .get("http://localhost:8080/game/start")
+      .then((resp) => {
+        const data = resp.data;
+        console.log(data);
+        // return data;
+        setCountry(data.options, data.country, data.code);
+      })
+      .catch((error) => {
+        console.error("ERROR".repeat(20));
+        console.error(error);
+        console.error("ERROR".repeat(20));
+      });
+  };
+  _getCountry();
+  // useEffect(async () => {
+  //   console.log(_getCountry());
+  // }, []);
+  // pickCountry();
+  // test();
+  // useEffect(() => {
+  //   if (initialMount.current) {
+  //     initialMount.current = false;
+  //   } else {
+  //     setCountry(getCountry());
+  //   }
+  // }, [correctAnswers, incorrectAnswers]);
 
   useEffect(() => {
     const totalAttempts = correctAnswers + incorrectAnswers;

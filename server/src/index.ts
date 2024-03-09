@@ -1,8 +1,11 @@
 import express from "express";
-import { Prisma, PrismaClient, Score } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import cors = require("cors");
-import { update } from "lodash";
+import { Game } from "./game";
+import countries from "../assets/with-difficulty.json";
 const prisma = new PrismaClient();
+
+const game = new Game(countries);
 
 const app = express();
 app.use(cors());
@@ -88,3 +91,9 @@ const getPlayerScore = async (userId: number) => {
   }
   return score;
 };
+
+app.get("/game/start", async (req, res) => {
+  game.start();
+  const data = game.test();
+  res.json(data);
+});
