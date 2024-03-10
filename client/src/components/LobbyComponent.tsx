@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
 import axios from "axios";
+import { Skeleton } from "@mui/material";
 
 function LobbyComponent() {
   const navigate = useNavigate();
@@ -22,7 +23,9 @@ function LobbyComponent() {
         const user = users.data.find((u:any) => u.id === score.userId);
         return { name: user.name, streak: score.highestStreak };
       });
-      setLeader(leaders);
+      setTimeout(() => {
+        setLeader(leaders);
+      }, 500);
     };
     fetchData();
   }, []);
@@ -45,7 +48,19 @@ function LobbyComponent() {
               {leader.streak}
             </h2>
           ))
-        : null}
+        :
+        <section>
+          <h2>
+            <Skeleton variant="text" sx={{ fontSize: '3rem', width: '30rem' }} />
+          </h2>
+          <h2>
+            <Skeleton variant="text" sx={{ fontSize: '3rem', width: '30rem' }} />
+            </h2>
+          <h2>
+            <Skeleton variant="text" sx={{ fontSize: '3rem', width: '30rem' }} />
+          </h2>
+        </section>
+        }
       <Button variant="contained" color="primary" onClick={handlePlayClick}>
         Play
       </Button>
