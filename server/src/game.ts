@@ -23,8 +23,6 @@ const rollDifficulty = (): number[] => {
     { length: 4 },
     () => numbers[getRandom(numbers.length - 1)]
   );
-  console.log("rollDifficulty", result);
-  console.log("from", numbers);
   return result;
 };
 
@@ -33,11 +31,13 @@ export class Game {
   options: Country[];
   country: Country | null;
   code: string | null;
+  health: number;
   constructor(countries: Country[]) {
     this._countries = countries;
     this.options = [];
     this.country = null;
     this.code = null;
+    this.health = 3;
   }
 
   start() {
@@ -47,9 +47,6 @@ export class Game {
     this.options = roundData.options;
     this.country = roundData.country;
     this.code = roundData.code;
-    console.log(this.options);
-    console.log(this.country.name, this.country?.population);
-    console.log(this.country?.difficulty);
   }
 
   stop() {
@@ -71,6 +68,24 @@ export class Game {
       code: this.code,
       options: this.options.map((option) => option.name),
     };
+  };
+
+  evaluate = (answer: boolean): boolean => {
+    let isAlive = true;
+    if (!answer) {
+      const updatedHealth = this.reduceHealth();
+      if (updatedHealth === 0) {
+        // this.stop();
+        isAlive = false;
+      }
+    }
+    return isAlive;
+  };
+
+  reduceHealth = (): number => {
+    this.health = this.health - 1;
+    console.log("player health", this.health);
+    return this.health;
   };
 
   private prep(countries: Country[]): Country[] {
@@ -133,9 +148,7 @@ export class Game {
       // const index = Math.floor(Math.random() * chosenArray.length);
       return chosenArray[index];
     });
-    console.log("picks".repeat(20));
-    console.log(picks);
-    console.log("picks".repeat(20));
+
     return picks;
   };
 

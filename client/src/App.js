@@ -9,10 +9,7 @@ import SignIn from "./components/signin/SignIn";
 import SignUp from "./components/signup/SignUp";
 import LobbyComponent from "./components/LobbyComponent";
 import UserContext from "./context/UserContext";
-import { pickCountries, pickCountry } from "./hooks/rankCountries";
-import test from "./hooks/rankCountries";
 import axios from "axios";
-import { set } from "lodash";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -69,12 +66,24 @@ function App() {
     setAccuracy(newAccuracy);
   }, [correctAnswers, incorrectAnswers]);
 
+  const handleGameOver = () => {
+    setCorrectAnswers(0);
+    setIncorrectAnswers(0);
+  };
+
   const evaluate = (answer) => {
     setShowingResult(true);
     const isCorrect = answer === country.countryName;
-    setIsCorrectGuess(isCorrect);
-
-    delaySetClicked(isCorrect);
+    axios
+      .post("http://localhost:8080/game/guess", {
+        guess: isCorrect,
+      })
+      .then((response) => {
+        console.log(response.data);
+        setIsCorrectGuess(isCorrect);
+        delaySetClicked(isCorrect);
+      })
+      .catch();
   };
 
   const delaySetClicked = (isCorrect) => {
@@ -121,6 +130,7 @@ function App() {
                   correctAnswers={correctAnswers}
                   incorrectAnswers={incorrectAnswers}
                   accuracy={accuracy.toFixed(2)}
+                  handleGameOver={handleGameOver}
                 />
                 <StreakComponent
                   streakCount={streakCount}

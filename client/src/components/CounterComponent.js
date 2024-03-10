@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import DangerousOutlinedIcon from "@mui/icons-material/DangerousOutlined";
 import CrisisAlertOutlinedIcon from "@mui/icons-material/CrisisAlertOutlined";
 import { green, red, blue } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const CounterComponent = ({ correctAnswers, incorrectAnswers, accuracy }) => {
+const CounterComponent = ({
+  correctAnswers,
+  incorrectAnswers,
+  accuracy,
+  handleGameOver,
+}) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (incorrectAnswers === 3) {
+      handleGameOver();
+      axios.get("http://localhost:8080/gameover");
+      navigate("/lobby");
+    }
+  }, [incorrectAnswers, navigate]);
   return (
     <div
       style={{
