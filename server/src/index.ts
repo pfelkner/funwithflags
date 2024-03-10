@@ -102,14 +102,3 @@ app.get("/gameover", async (req, res) => {
   game.stop();
   game = new Game(countries);
 });
-
-app.post("/game/guess", async (req, res) => {
-  const guess = req.body.guess;
-  const keepPlaying = game.evaluate(guess);
-  console.log("keepPlaying-".repeat(20));
-  console.log(keepPlaying);
-  console.log("keepPlaying-".repeat(20));
-  // game.start();
-  // const data = game.test();
-  res.json(keepPlaying);
-});

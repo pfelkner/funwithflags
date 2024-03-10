@@ -64,22 +64,10 @@ export class Game {
 
   test = () => {
     return {
-      country: this.country!.name,
+      name: this.country!.name,
       code: this.code,
       options: this.options.map((option) => option.name),
     };
-  };
-
-  evaluate = (answer: boolean): boolean => {
-    let isAlive = true;
-    if (!answer) {
-      const updatedHealth = this.reduceHealth();
-      if (updatedHealth === 0) {
-        // this.stop();
-        isAlive = false;
-      }
-    }
-    return isAlive;
   };
 
   reduceHealth = (): number => {
