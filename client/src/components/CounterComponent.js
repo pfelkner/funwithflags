@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import DangerousOutlinedIcon from "@mui/icons-material/DangerousOutlined";
 import CrisisAlertOutlinedIcon from "@mui/icons-material/CrisisAlertOutlined";
@@ -7,19 +7,26 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const CounterComponent = ({
-  correctAnswers,
-  incorrectAnswers,
-  accuracy,
+  answers: { correct, incorrect },
   handleGameOver,
 }) => {
   const navigate = useNavigate();
+  const [accuracy, setAccuracy] = useState(0);
+
   useEffect(() => {
-    if (incorrectAnswers === 3) {
+    if (incorrect === 3) {
       handleGameOver();
       axios.get("http://localhost:8080/gameover");
       navigate("/lobby");
     }
-  }, [incorrectAnswers, navigate]);
+  }, [incorrect, navigate]);
+
+  useEffect(() => {
+    const totalAttempts = correct + incorrect;
+    const newAccuracy = totalAttempts > 0 ? (correct / totalAttempts) * 100 : 0;
+    setAccuracy(newAccuracy);
+  }, [correct, incorrect]);
+
   return (
     <div
       style={{
@@ -39,7 +46,7 @@ const CounterComponent = ({
         }}
       >
         <TaskAltOutlinedIcon style={{ color: green[500], fontSize: "2rem" }} />
-        <span>{correctAnswers}</span>
+        <span>{correct}</span>
       </div>
       <div
         style={{
@@ -50,7 +57,7 @@ const CounterComponent = ({
         }}
       >
         <DangerousOutlinedIcon style={{ color: red[500], fontSize: "2rem" }} />
-        <span>{incorrectAnswers}</span>
+        <span>{incorrect}</span>
       </div>
       <div
         style={{
@@ -63,7 +70,7 @@ const CounterComponent = ({
         <CrisisAlertOutlinedIcon
           style={{ color: blue[500], fontSize: "2rem" }}
         />
-        <span> {accuracy}%</span>
+        <span> {accuracy.toFixed(2)}%</span>
       </div>
     </div>
   );

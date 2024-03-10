@@ -13,15 +13,12 @@ import axios from "axios";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+  const [answers, setAnswers] = useState({ correct: 0, incorrect: 0 });
   const [isCorrectGuess, setIsCorrectGuess] = useState(null);
-  const [accuracy, setAccuracy] = useState(0);
 
   const [showingResult, setShowingResult] = useState(false);
 
   const [streakCount, setStreakcount] = useState(0);
-  const [highestStreak, setHighestStreak] = useState(0);
 
   const [country, setCountry] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,23 +54,21 @@ function App() {
     } else {
       setCountry(_getCountry());
     }
-  }, [correctAnswers, incorrectAnswers]);
+  }, [answers.correct, answers.incorrect]);
 
   useEffect(() => {
-    const totalAttempts = correctAnswers + incorrectAnswers;
-    const newAccuracy =
-      totalAttempts > 0 ? (correctAnswers / totalAttempts) * 100 : 0;
-    setAccuracy(newAccuracy);
-  }, [correctAnswers, incorrectAnswers]);
+    setStreakcount((prev) => prev + 1);
+  }, [answers.correct]);
+
+  useEffect(() => {
+    setStreakcount(0);
+  }, [answers.incorrect]);
 
   const handleGameOver = () => {
-    setCorrectAnswers(0);
-    setIncorrectAnswers(0);
+    setAnswers({ correct: 0, incorrect: 0 });
   };
 
-  const evaluate = (answer) => {
-    setShowingResult(true);
-    const isCorrect = answer === country.countryName;
+  const evaluate = (isCorrect) => {
     axios
       .post("http://localhost:8080/game/guess", {
         guess: isCorrect,
@@ -81,32 +76,18 @@ function App() {
       .then((response) => {
         console.log(response.data);
         setIsCorrectGuess(isCorrect);
-        delaySetClicked(isCorrect);
+        setTimeout(() => {
+          isCorrect
+            ? setAnswers((prev) => ({ ...prev, correct: prev.correct + 1 }))
+            : setAnswers((prev) => ({
+                ...prev,
+                incorrect: prev.incorrect + 1,
+              }));
+          setShowingResult(false);
+          setIsCorrectGuess(null);
+        }, 800);
       })
       .catch();
-  };
-
-  const delaySetClicked = (isCorrect) => {
-    setTimeout(() => {
-      if (isCorrect) {
-        setCorrectAnswers((prev) => prev + 1);
-        setStreakcount((prev) => {
-          const newStreakCount = prev + 1;
-          // Use the newStreakCount directly to check against highestStreak
-          if (newStreakCount > highestStreak) {
-            setHighestStreak(newStreakCount);
-          }
-          return newStreakCount;
-        });
-      } else {
-        setIncorrectAnswers((prev) => prev + 1);
-        setStreakcount(0);
-      }
-
-      // axios.post
-      setShowingResult(false);
-      setIsCorrectGuess(null);
-    }, 1000);
   };
 
   return (
@@ -127,21 +108,15 @@ function App() {
                   />
                 )}
                 <CounterComponent
-                  correctAnswers={correctAnswers}
-                  incorrectAnswers={incorrectAnswers}
-                  accuracy={accuracy.toFixed(2)}
+                  answers={answers}
                   handleGameOver={handleGameOver}
                 />
-                <StreakComponent
-                  streakCount={streakCount}
-                  highestStreak={highestStreak}
-                />
+                <StreakComponent streakCount={streakCount} />
                 {!loading && (
                   <GuessComponent
                     buttonLabels={country.countryNames}
                     onClick={evaluate}
                     solution={country.countryName}
-                    showingResult={showingResult}
                   />
                 )}
               </div>

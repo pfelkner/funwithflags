@@ -4,17 +4,17 @@ import Button from "@mui/material/Button";
 import { green, red } from "@mui/material/colors"; // Corrected import path for green and red
 import { lighten } from "@mui/material/styles"; // Keep this for the 'lighten' function
 
-const GuessComponent = ({ buttonLabels, onClick, solution, showingResult }) => {
+const GuessComponent = ({ buttonLabels, onClick, solution }) => {
   const [clicked, setClicked] = useState(false);
-  console.log(buttonLabels);
   const onBtnClick = (label) => {
+    const isCorrect = label === solution;
     setClicked(true);
-    onClick(label);
+    onClick(isCorrect);
   };
 
   return (
     <div style={{ padding: "5em" }}>
-      {!showingResult ? (
+      {!clicked ? (
         <Grid container spacing={2}>
           {buttonLabels &&
             buttonLabels.map((label, index) => (

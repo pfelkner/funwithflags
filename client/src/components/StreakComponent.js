@@ -1,10 +1,18 @@
 // MyComponent.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
 import { green, red, blue, yellow } from "@mui/material/colors";
 
-const StreakComponent = ({ streakCount, highestStreak }) => {
+const StreakComponent = ({ streakCount }) => {
+  // const [streakCount, setStreakcount] = useState(0);
+  const [highestStreak, setHighestStreak] = useState(0);
+
+  useEffect(() => {
+    if (streakCount > highestStreak) {
+      setHighestStreak(streakCount);
+    }
+  }, [streakCount]);
   return (
     <div
       style={{
