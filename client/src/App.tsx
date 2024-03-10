@@ -8,6 +8,7 @@ import StreakComponent from "./components/StreakComponent";
 import SignIn from "./components/signin/SignIn";
 import SignUp from "./components/signup/SignUp";
 import LobbyComponent from "./components/LobbyComponent";
+import ResponsiveAppBar from "./components/NavBar";
 import UserContext from "./context/UserContext";
 import axios from "axios";
 
@@ -90,11 +91,17 @@ function App() {
         <Routes>
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/lobby" element={<LobbyComponent />} />
+          <Route path="/lobby" element={
+          <div>
+            <ResponsiveAppBar />
+            <LobbyComponent />
+          </div>
+          }/>
           <Route
             path="/funwithflags"
             element={
               <div>
+                <ResponsiveAppBar />
                 {!loading && (
                   <FlagComponent
                     countryCode={country!.code}
