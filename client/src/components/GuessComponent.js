@@ -6,7 +6,7 @@ import { lighten } from "@mui/material/styles"; // Keep this for the 'lighten' f
 
 const GuessComponent = ({ buttonLabels, onClick, solution, showingResult }) => {
   const [clicked, setClicked] = useState(false);
-
+  console.log(buttonLabels);
   const onBtnClick = (label) => {
     setClicked(true);
     onClick(label);
@@ -16,24 +16,25 @@ const GuessComponent = ({ buttonLabels, onClick, solution, showingResult }) => {
     <div style={{ padding: "5em" }}>
       {!showingResult ? (
         <Grid container spacing={2}>
-          {buttonLabels.map((label, index) => (
-            <Grid item xs={6} key={index}>
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={() => onBtnClick(label)}
-                sx={{
-                  ":hover": {
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.5)",
-                    transform: "scale(1.01)", // Slightly increase size
-                  },
-                  transition: "all 0.4s ease-in-out",
-                }}
-              >
-                {label}
-              </Button>
-            </Grid>
-          ))}
+          {buttonLabels &&
+            buttonLabels.map((label, index) => (
+              <Grid item xs={6} key={index}>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => onBtnClick(label)}
+                  sx={{
+                    ":hover": {
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.5)",
+                      transform: "scale(1.01)", // Slightly increase size
+                    },
+                    transition: "all 0.4s ease-in-out",
+                  }}
+                >
+                  {label}
+                </Button>
+              </Grid>
+            ))}
         </Grid>
       ) : (
         <Grid container spacing={2}>

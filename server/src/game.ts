@@ -18,8 +18,14 @@ const getRandom = (ceil: number): number => {
 };
 
 const rollDifficulty = (): number[] => {
-  const numbers = [1, 1, 1, 1, 1, 1, 1, 2, 2, 3];
-  return Array.from({ length: 4 }, () => numbers[getRandom(numbers.length)]);
+  const numbers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3];
+  const result = Array.from(
+    { length: 4 },
+    () => numbers[getRandom(numbers.length - 1)]
+  );
+  console.log("rollDifficulty", result);
+  console.log("from", numbers);
+  return result;
 };
 
 export class Game {
@@ -37,12 +43,13 @@ export class Game {
   start() {
     const roundData = this.handle(this._countries);
     this._countries = roundData.countries;
+    console.log(this._countries.length);
     this.options = roundData.options;
     this.country = roundData.country;
     this.code = roundData.code;
-    console.log("start#".repeat(20));
-    console.log(roundData);
-    console.log("start#".repeat(20));
+    console.log(this.options);
+    console.log(this.country.name, this.country?.population);
+    console.log(this.country?.difficulty);
   }
 
   stop() {
@@ -105,9 +112,11 @@ export class Game {
   // };
 
   private getOptions = (roll: number[], countries: Country[]): Country[] => {
-    const easy = countries.filter((country) => country.difficulty === 1);
-    const medium = countries.filter((country) => country.difficulty === 2);
-    const hard = countries.filter((country) => country.difficulty === 3);
+    const easy = countries.filter((country) => country.population >= 50000000);
+    const medium = countries.filter(
+      (country) => country.population >= 10000000
+    );
+    const hard = countries.filter((country) => country.difficulty < 10000000);
 
     // See if map works or back to foreach
     const picks: Country[] = roll.map((difficulty) => {
@@ -120,10 +129,13 @@ export class Game {
         chosenArray = hard;
       }
 
-      const index = getRandom(chosenArray.length);
+      const index = getRandom(chosenArray.length - 1);
       // const index = Math.floor(Math.random() * chosenArray.length);
       return chosenArray[index];
     });
+    console.log("picks".repeat(20));
+    console.log(picks);
+    console.log("picks".repeat(20));
     return picks;
   };
 

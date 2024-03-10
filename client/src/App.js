@@ -5,7 +5,6 @@ import CounterComponent from "./components/CounterComponent";
 import FlagComponent from "./components/FlagComponent";
 import GuessComponent from "./components/GuessComponent";
 import StreakComponent from "./components/StreakComponent";
-import getCountry from "./hooks/getCountry";
 import SignIn from "./components/signin/SignIn";
 import SignUp from "./components/signup/SignUp";
 import LobbyComponent from "./components/LobbyComponent";
@@ -27,37 +26,41 @@ function App() {
   const [streakCount, setStreakcount] = useState(0);
   const [highestStreak, setHighestStreak] = useState(0);
 
-  const [country, setCountry] = useState(() => getCountry());
+  const [country, setCountry] = useState(null);
+  const [loading, setLoading] = useState(true);
   const initialMount = useRef(true);
-
   const _getCountry = () => {
+    setLoading(true);
     axios
       .get("http://localhost:8080/game/start")
       .then((resp) => {
         const data = resp.data;
-        console.log(data);
-        // return data;
-        setCountry(data.options, data.country, data.code);
+        const countryData = {
+          countryNames: data.options,
+          countryName: data.country,
+          countryCode: data.code,
+        };
+
+        setCountry(countryData);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("ERROR".repeat(20));
         console.error(error);
-        console.error("ERROR".repeat(20));
       });
   };
-  _getCountry();
-  // useEffect(async () => {
-  //   console.log(_getCountry());
-  // }, []);
-  // pickCountry();
-  // test();
-  // useEffect(() => {
-  //   if (initialMount.current) {
-  //     initialMount.current = false;
-  //   } else {
-  //     setCountry(getCountry());
-  //   }
-  // }, [correctAnswers, incorrectAnswers]);
+
+  useEffect(() => {
+    _getCountry();
+  }, []);
+
+  useEffect(() => {
+    if (initialMount.current) {
+      initialMount.current = false;
+    } else {
+      setCountry(_getCountry());
+    }
+  }, [correctAnswers, incorrectAnswers]);
 
   useEffect(() => {
     const totalAttempts = correctAnswers + incorrectAnswers;
@@ -108,11 +111,12 @@ function App() {
             path="/funwithflags"
             element={
               <div>
-                <FlagComponent
-                  countryCode={country.countryCode}
-                  isCorrectGuess={isCorrectGuess}
-                />
-                {/* <SolutionComponent solution={country.countryName} /> */}
+                {!loading && (
+                  <FlagComponent
+                    countryCode={country.countryCode}
+                    isCorrectGuess={isCorrectGuess}
+                  />
+                )}
                 <CounterComponent
                   correctAnswers={correctAnswers}
                   incorrectAnswers={incorrectAnswers}
@@ -122,12 +126,14 @@ function App() {
                   streakCount={streakCount}
                   highestStreak={highestStreak}
                 />
-                <GuessComponent
-                  buttonLabels={country.countryNames}
-                  onClick={evaluate}
-                  solution={country.countryName}
-                  showingResult={showingResult}
-                />
+                {!loading && (
+                  <GuessComponent
+                    buttonLabels={country.countryNames}
+                    onClick={evaluate}
+                    solution={country.countryName}
+                    showingResult={showingResult}
+                  />
+                )}
               </div>
             }
           />
