@@ -6,10 +6,19 @@ import { green, red, blue } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
+interface CounterComponentProps {
+  answers: {
+    correct: number;
+    incorrect: number;
+  };
+  handleGameOver: () => void;
+}
+
 const CounterComponent = ({
   answers: { correct, incorrect },
   handleGameOver,
-}) => {
+}: CounterComponentProps) => {
   const navigate = useNavigate();
   const [accuracy, setAccuracy] = useState(0);
 
@@ -70,7 +79,7 @@ const CounterComponent = ({
         <CrisisAlertOutlinedIcon
           style={{ color: blue[500], fontSize: "2rem" }}
         />
-        <span> {accuracy.toFixed(2)}%</span>
+        <span> {accuracy.toFixed(0)}%</span>
       </div>
     </div>
   );

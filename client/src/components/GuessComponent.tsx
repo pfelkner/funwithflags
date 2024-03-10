@@ -4,9 +4,16 @@ import Button from "@mui/material/Button";
 import { green, red } from "@mui/material/colors"; // Corrected import path for green and red
 import { lighten } from "@mui/material/styles"; // Keep this for the 'lighten' function
 
-const GuessComponent = ({ buttonLabels, onClick, solution }) => {
+interface GuessComponentProps {
+  buttonLabels: string[];
+  onClick: (isCorrect: boolean) => void;
+  solution: string;
+
+}
+
+const GuessComponent = ({ buttonLabels, onClick, solution }: GuessComponentProps) => {
   const [clicked, setClicked] = useState(false);
-  const onBtnClick = (label) => {
+  const onBtnClick = (label: string) => {
     const isCorrect = label === solution;
     setClicked(true);
     onClick(isCorrect);

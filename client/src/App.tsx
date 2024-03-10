@@ -11,17 +11,30 @@ import LobbyComponent from "./components/LobbyComponent";
 import UserContext from "./context/UserContext";
 import axios from "axios";
 
+interface Answers {
+  correct: number;
+  incorrect: number;
+}
+
+interface Country {
+  name: string;
+  code: string;
+  options: string[];
+}
+
+
+
 function App() {
-  const [user, setUser] = useState(null);
-  const [answers, setAnswers] = useState({ correct: 0, incorrect: 0 });
-  const [isCorrectGuess, setIsCorrectGuess] = useState(null);
-  const [streak, setStreak] = useState(0);
+  const [user, setUser] = useState<any>(null); // TODO: define user type
+  const [answers, setAnswers] = useState<Answers>({ correct: 0, incorrect: 0 });
+  const [isCorrectGuess, setIsCorrectGuess] = useState<boolean|null>(null);
+  const [streak, setStreak] = useState<number>(0);
 
-  const [country, setCountry] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [country, setCountry] = useState<Country |null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const prevCorrect = useRef(0);
-  const prevIncorrect = useRef(0);
+  const prevCorrect = useRef<number>(0);
+  const prevIncorrect = useRef<number>(0);
   // const initialMount = useRef(true); maybe make use to avoid unnecessary rerenders
   const getCountry = () => {
     setLoading(true);
@@ -58,7 +71,7 @@ function App() {
     setAnswers({ correct: 0, incorrect: 0 });
   };
 
-  const processGuess = (isCorrect) => {
+  const processGuess = (isCorrect: boolean) => {
     setIsCorrectGuess(isCorrect);
     setTimeout(() => {
       isCorrect
@@ -84,7 +97,7 @@ function App() {
               <div>
                 {!loading && (
                   <FlagComponent
-                    countryCode={country.code}
+                    countryCode={country!.code}
                     isCorrectGuess={isCorrectGuess}
                   />
                 )}
@@ -95,9 +108,9 @@ function App() {
                 <StreakComponent streakCount={streak} />
                 {!loading && (
                   <GuessComponent
-                    buttonLabels={country.options}
+                    buttonLabels={country!.options}
                     onClick={processGuess}
-                    solution={country.name}
+                    solution={country!.name}
                   />
                 )}
               </div>

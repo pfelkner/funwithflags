@@ -6,8 +6,8 @@ import axios from "axios";
 
 function LobbyComponent() {
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
-  const [leaders, setLeader] = useState(null);
+  const { user } : any = useContext(UserContext);
+  const [leaders, setLeader]:any = useState(null);
 
   const handlePlayClick = () => {
     navigate("/funwithflags");
@@ -18,8 +18,8 @@ function LobbyComponent() {
       const users = await axios.get("http://localhost:8080/user");
       const scores = await axios.get("http://localhost:8080/score");
       const highscores = scores.data.slice(0, 3);
-      const leaders = highscores.map((score) => {
-        const user = users.data.find((u) => u.id === score.userId);
+      const leaders = highscores.map((score:any) => {
+        const user = users.data.find((u:any) => u.id === score.userId);
         return { name: user.name, streak: score.highestStreak };
       });
       setLeader(leaders);
@@ -39,7 +39,7 @@ function LobbyComponent() {
     >
       <h1>Welcome {user?.name} to the Flag Guessing Game!</h1>
       {leaders
-        ? leaders.map((leader, index) => (
+        ? leaders.map((leader:any, index:number) => (
             <h2 key={index}>
               {index + 1}. place: {leader.name} with a streak of&nbsp;
               {leader.streak}

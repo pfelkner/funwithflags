@@ -4,7 +4,11 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
 import { green, red, blue, yellow } from "@mui/material/colors";
 
-const StreakComponent = ({ streakCount }) => {
+interface StreakComponentProps {
+  streakCount: number;
+}
+
+const StreakComponent = ({ streakCount }:StreakComponentProps ) => {
   // const [streakCount, setStreakcount] = useState(0);
   const [highestStreak, setHighestStreak] = useState(0);
 

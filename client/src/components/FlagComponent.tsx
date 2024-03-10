@@ -2,7 +2,13 @@
 import React from "react";
 import Card from "@mui/material/Card";
 
-const FlagComponent = ({ countryCode, isCorrectGuess }) => {
+interface FlagComponentProps {
+  countryCode: string;
+  isCorrectGuess: boolean | null;
+
+}
+
+const FlagComponent = ({ countryCode, isCorrectGuess }: FlagComponentProps) => {
   const link = `https://flagcdn.com/w320/${countryCode}.png`;
   console.log("flagcomponent");
   return (
