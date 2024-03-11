@@ -30,13 +30,16 @@ function ResponsiveAppBar() {
   };
 
   const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+    // setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = () => {
+    // navigate('/lobby');
     setAnchorElUser(null);
-    navigate('/lobby');
   };
+  const home = (event:any):void  => {
+    navigate('/lobby');
+  }
 
   return (
     <AppBar position="static">
@@ -57,6 +60,7 @@ function ResponsiveAppBar() {
               color: 'inherit',
               textDecoration: 'none',
             }}
+            onClick={home}
           >
             LOGO
           </Typography>
