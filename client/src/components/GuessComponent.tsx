@@ -3,22 +3,28 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { green, red } from "@mui/material/colors"; // Corrected import path for green and red
 import { lighten } from "@mui/material/styles"; // Keep this for the 'lighten' function
+import { useNavigate } from "react-router-dom";
 
 interface GuessComponentProps {
+  
   buttonLabels: string[];
   onClick: (isCorrect: boolean) => void;
   solution: string;
-
+  
 }
 
 const GuessComponent = ({ buttonLabels, onClick, solution }: GuessComponentProps) => {
+  const navigate = useNavigate();
   const [clicked, setClicked] = useState(false);
   const onBtnClick = (label: string) => {
     const isCorrect = label === solution;
     setClicked(true);
     onClick(isCorrect);
   };
-
+  
+  const home = (event:any):void  => {
+    navigate('/lobby');
+  }
   return (
     <div style={{ padding: "5em" }}>
       {!clicked ? (
@@ -42,7 +48,9 @@ const GuessComponent = ({ buttonLabels, onClick, solution }: GuessComponentProps
                 </Button>
               </Grid>
             ))}
+                    <Button variant="contained" color="primary" onClick={home}/>
         </Grid>
+
       ) : (
         <Grid container spacing={2}>
           {buttonLabels.map((label, index) => (

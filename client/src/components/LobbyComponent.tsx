@@ -22,7 +22,7 @@ function LobbyComponent() {
       const leaders = highscores.map((score:any) => {
         const user = users.data.find((u:any) => u.id === score.userId);
         return { name: user.name, streak: score.highestStreak };
-      });
+      }).sort((a:any, b:any) => b.streak - a.streak);
       setTimeout(() => {
         setLeader(leaders);
       }, 500);
@@ -40,7 +40,10 @@ function LobbyComponent() {
         height: "100vh",
       }}
     >
-      <h1>Welcome {user?.name} to the Flag Guessing Game!</h1>
+      {user && (
+
+        <h1>Welcome {user?.name} to the Flag Guessing Game!</h1>
+      )}
       {leaders
         ? leaders.map((leader:any, index:number) => (
             <h2 key={index}>

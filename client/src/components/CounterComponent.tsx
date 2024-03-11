@@ -36,6 +36,20 @@ const CounterComponent = ({
     setAccuracy(newAccuracy);
   }, [correct, incorrect]);
 
+  useEffect(() => {
+    // Empty function for initial effect
+    return () => {
+      // This function will be called when the component unmounts
+      // axios.post('http://your-api-url.com', { /* your data */ })
+      //   .then(response => {
+      //     console.log(response.data);
+      //   })
+      //   .catch(error => {
+      //     console.error('There was an error!', error);
+      //   });
+    };
+  }, []);
+
   return (
     <div
       style={{

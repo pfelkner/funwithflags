@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import CounterComponent from "./components/CounterComponent";
 import FlagComponent from "./components/FlagComponent";
 import GuessComponent from "./components/GuessComponent";
@@ -26,7 +26,8 @@ interface Country {
 
 
 function App() {
-  const [user, setUser] = useState<any>(null); // TODO: define user type
+
+  const [user, setUser] = useState<any>(null); // TODO: define user type 
   const [answers, setAnswers] = useState<Answers>({ correct: 0, incorrect: 0 });
   const [isCorrectGuess, setIsCorrectGuess] = useState<boolean|null>(null);
   const [streak, setStreak] = useState<number>(0);
@@ -85,6 +86,8 @@ function App() {
     }, 800);
   };
 
+
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <Router>
@@ -101,7 +104,7 @@ function App() {
             path="/funwithflags"
             element={
               <div>
-                <ResponsiveAppBar />
+                <ResponsiveAppBar/>
                 {!loading && (
                   <FlagComponent
                     countryCode={country!.code}

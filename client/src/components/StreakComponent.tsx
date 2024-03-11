@@ -17,13 +17,23 @@ const StreakComponent = ({ streakCount }:StreakComponentProps ) => {
   const [highestStreak, setHighestStreak] = useState(0);
   const userContext = useUser();
 
+useEffect(() => {
+  axios
+    .get(`http://localhost:8080/score`)
+    .then((response) => {
+      console.log(response.data);
+      setHighestStreak(response.data[0].highestStreak);
+    })
+    .catch((error) => {
+      console.error("There was an error!", error);
+    });
+}, []);
+
   useEffect(() => {
-    // Empty function for initial effect
-    return () => {
-      // This function will be called when the component unmounts
+      console.log('Unmounting StreakComponent', highestStreak, streakCount);
       axios.post('http://localhost:8080/score/update', {
         userId: userContext!.user.id,
-        highestStreak: highestStreak,
+        highestStreak: streakCount,
       })
         .then(response => {
           console.log(response.data);
@@ -31,12 +41,13 @@ const StreakComponent = ({ streakCount }:StreakComponentProps ) => {
         .catch(error => {
           console.error('There was an error!', error);
         });
-    };
-  }, []);
+  }, [highestStreak, streakCount]);
 
   useEffect(() => {
     if (streakCount > highestStreak) {
       setHighestStreak(streakCount);
+      console.log('highestStreak:', highestStreak);
+      console.log('streakCount:', streakCount);
     }
   }, [streakCount]);
   return (

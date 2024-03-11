@@ -61,6 +61,11 @@ app.post("/score/update", async (req, res) => {
   const userId = req.body.userId;
   const newScore = req.body.highestStreak;
   const userScore = await getPlayerScore(userId);
+  console.log("update#".repeat(20));
+  console.log(
+    `User ${userId} has score ${newScore} and highestStreak ${userScore.highestStreak}`
+  );
+  console.log("update#".repeat(20));
   if (userScore.highestStreak! < newScore) {
     // cant be null due to implementaton of getPlayerScore
     const updatedScore = await prisma.score.update({
