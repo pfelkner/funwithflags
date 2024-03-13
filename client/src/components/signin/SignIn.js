@@ -76,7 +76,7 @@ export default function SignIn() {
         setTimeout(() => {
           navigate("/lobby");
           setOpenSuccess(false);
-        }, 1500);
+        }, 500);
       }
     } catch (error) {
       console.log(error.response.data);

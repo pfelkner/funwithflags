@@ -16,7 +16,7 @@ function LobbyComponent() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const users = await axios.get("http://localhost:8080/user");
+      const users = await axios.get("http://localhost:8080/auth/users");
       const scores = await axios.get("http://localhost:8080/score");
       const highscores = scores.data.slice(0, 3);
       const leaders = highscores.map((score:any) => {
