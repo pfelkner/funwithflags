@@ -1,6 +1,6 @@
 import { PrismaClient, User } from "@prisma/client";
 import express, { Router } from "express";
-import { createUser, getUserByName, getUsers } from "../services/service";
+import { createUser, getUserByName, getUsers } from "../services/db-service";
 
 const router = Router();
 

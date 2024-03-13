@@ -1,16 +1,28 @@
-import { PrismaClient, Score, User } from "@prisma/client";
-import express, { Router } from "express";
+import { GameService as gs } from "./../services/game";
+import { Score } from "@prisma/client";
+import { Router } from "express";
 import {
-  createUser,
-  getUserByName,
-  getUsers,
   getPlayerScore,
   updatePlayerScore,
   getScores,
 } from "../services/db-service";
-import { get } from "lodash";
+import { Game } from "../src/game";
+import countries from "../assets/with-difficulty.json";
 
 const router = Router();
+
+router.get("/start", async (req, res) => {
+  // const game = new Game(countries);
+  const game = gs.startGame();
+  const data = game.test();
+  res.json(data);
+});
+
+// router.get("/game/start", async (req, res) => {
+//   game.start();
+//   const data = game.test();
+//   res.json(data);
+// });
 
 router.post("/update", async (req, res) => {
   const userId = req.body.userId;
@@ -44,3 +56,8 @@ router.get("/:id", async (req, res) => {
 });
 
 export default router;
+
+// app.get("/gameover", async (req, res) => {
+//   game.stop();
+//   game = new Game(countries);
+// });

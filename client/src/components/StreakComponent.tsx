@@ -18,11 +18,12 @@ const StreakComponent = ({ streakCount }:StreakComponentProps ) => {
   const userContext = useUser();
 
 useEffect(() => {
+  const userId = userContext!.user.id;
   axios
-    .get(`http://localhost:8080/score`)
+    .get(`http://localhost:8080/score/${userId}`)
     .then((response) => {
       console.log(response.data);
-      setHighestStreak(response.data[0].highestStreak);
+      setHighestStreak(response.data.highestStreak);
     })
     .catch((error) => {
       console.error("There was an error!", error);
