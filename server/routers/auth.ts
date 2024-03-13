@@ -5,9 +5,6 @@ import { createUser, getUserByName, getUsers } from "../services/service";
 const router = Router();
 
 router.post("/signin", async (req, res) => {
-  console.log(JSON.stringify(req.body));
-  console.log(req);
-  console.log("#####");
   const userName = req.body.name;
   const user = await getUserByName(userName);
   if (!user) {
@@ -34,6 +31,11 @@ router.post("/signup", async (req, res) => {
   const user = await createUser(name, password);
 
   res.json(user);
+});
+
+router.get("/users", async (req, res) => {
+  const users = await getUsers();
+  res.json(users);
 });
 
 export default router;
