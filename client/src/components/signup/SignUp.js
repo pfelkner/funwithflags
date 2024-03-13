@@ -60,7 +60,7 @@ export default function SignUp() {
     console.log(userData);
 
     axios
-      .post("http://localhost:8080/signup", userData)
+      .post("http://localhost:8080/auth/signup", userData)
       .then((resp) => {
         setUser(resp.data);
 

@@ -1,0 +1,39 @@
+import { PrismaClient, User } from "@prisma/client";
+import express, { Router } from "express";
+import { createUser, getUserByName, getUsers } from "../services/service";
+
+const router = Router();
+
+router.post("/signin", async (req, res) => {
+  console.log(JSON.stringify(req.body));
+  console.log(req);
+  console.log("#####");
+  const userName = req.body.name;
+  const user = await getUserByName(userName);
+  if (!user) {
+    res.status(400).send("User not found");
+    return;
+  }
+  if (user.password !== req.body.password) {
+    res.status(400).send("Wrong password");
+    return;
+  }
+
+  console.log("return user", user);
+  res.json(user);
+});
+
+router.post("/signup", async (req, res) => {
+  const name = req.body.name;
+  const password = req.body.password;
+  const users: User[] = await getUsers();
+  if (users.find((user) => user.name === name)) {
+    res.status(400).send("Name already exists");
+    return;
+  }
+  const user = await createUser(name, password);
+
+  res.json(user);
+});
+
+export default router;

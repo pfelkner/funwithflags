@@ -1,18 +1,23 @@
+require("dotenv").config();
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import cors = require("cors");
 import { Game } from "./game";
 import countries from "../assets/with-difficulty.json";
+import authRouter from "../routers/auth";
 const prisma = new PrismaClient();
+const PORT = process.env.PORT || 8080;
 
 let game = new Game(countries);
 
 const app = express();
 app.use(cors());
-const port = 8080;
 app.use(express.json());
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+
+app.use("/auth", authRouter);
+app.use(express.json());
+app.listen(PORT, () => {
+  console.log(`[server]: Server is running at http://localhost:${PORT}`);
 });
 
 app.get("/user", async (req, res) => {
@@ -20,41 +25,6 @@ app.get("/user", async (req, res) => {
   const users = await prisma.user.findMany();
   console.log("users:", users);
   res.json(users);
-});
-
-app.post("/signup", async (req, res) => {
-  const name = req.body.name;
-  const password = req.body.password;
-  const users = await prisma.user.findMany();
-  if (users.find((user) => user.name === name)) {
-    res.status(400).send("Name already exists");
-    return;
-  }
-  const user = await prisma.user.create({
-    data: {
-      name,
-      password,
-    },
-  });
-  res.send(user.name);
-});
-
-app.post("/signin", async (req, res) => {
-  const userName = req.body.name;
-  const users = await prisma.user.findMany();
-  const user = users.find((user) => user.name === userName);
-  console.log("userName", userName);
-  console.log("user", user);
-  if (!user) {
-    res.status(400).send("User not found");
-    return;
-  }
-  if (user.password !== req.body.password) {
-    res.status(400).send("Wrong password");
-    return;
-  }
-
-  res.send(user);
 });
 
 app.post("/score/update", async (req, res) => {
