@@ -49,7 +49,7 @@ export class Game {
     this.code = roundData.code;
   }
 
-  stop() {
+  stop(userId: number) {
     console.log("Game stopped");
     // store score
   }
@@ -62,7 +62,7 @@ export class Game {
     this.country = roundData.country;
   }
 
-  test = () => {
+  getRoundData = () => {
     return {
       name: this.country!.name,
       code: this.code,
