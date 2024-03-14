@@ -41,7 +41,7 @@ function App() {
   const getCountry = () => {
     setLoading(true);
     axios
-      .get("http://localhost:8080/game/start")
+      .get("http://localhost:8080/game/nextRound")
       .then((resp) => {
         const data = resp.data;
         setCountry(data);

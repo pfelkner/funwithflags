@@ -10,7 +10,9 @@ function LobbyComponent() {
   const { user } : any = useContext(UserContext);
   const [leaders, setLeader]:any = useState(null);
 
-  const handlePlayClick = () => {
+  const handlePlayClick = async () => {
+    const test = await axios.get("http://localhost:8080/game/start");
+
     navigate("/funwithflags");
   };
 
