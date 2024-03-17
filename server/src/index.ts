@@ -1,13 +1,14 @@
 require("dotenv").config();
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import cors = require("cors");
+
+// Create a single supabase client for interacting with your database
 import { Game } from "./game";
 import countries from "../assets/with-difficulty.json";
 import authRouter from "../routers/auth";
 import scoreRouter from "../routers/score";
 import gameRouter from "../routers/game";
-const prisma = new PrismaClient();
+
 const PORT = process.env.PORT || 8080;
 
 let game = new Game(countries);
@@ -22,17 +23,11 @@ app.use("/game", gameRouter);
 
 app.use(express.json());
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`[server]: Server is running at http://localhost:${PORT}`);
 });
 
-// app.get("/game/start", async (req, res) => {
-//   game.start();
-//   const data = game.getRoundData();
-//   res.json(data);
-// });
-
 app.get("/gameover", async (req, res) => {
-  game.stop();
+  // game.stop();
   game = new Game(countries);
 });

@@ -18,7 +18,7 @@ router.get("/start", async (req, res) => {
 
 router.get("/nextRound", async (req, res) => {
   const data = gs.game?.getRoundData();
-
+  gs.game?.next();
   res.json(data);
 });
 

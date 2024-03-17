@@ -1,12 +1,9 @@
-import { PrismaClient, Score, User } from "@prisma/client";
 import express, { Router } from "express";
 import {
-  createUser,
-  getUserByName,
-  getUsers,
   getPlayerScore,
   updatePlayerScore,
   getScores,
+  ScoreEntity,
 } from "../services/db-service";
 import { get } from "lodash";
 
@@ -21,7 +18,7 @@ router.post("/update", async (req, res) => {
   );
   if (userScore.highestStreak! < newScore) {
     // cant be null due to implementaton of getPlayerScore
-    const updatedScore = updatePlayerScore(userId, newScore);
+    const updatedScore = await updatePlayerScore(userId, newScore);
   }
 
   res.send("Score updated");
@@ -33,9 +30,9 @@ router.get("/", async (_, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId: string = req.params.id;
 
-  const scores: Score[] = await getScores();
+  const scores: ScoreEntity[] = await getScores();
   const playerScore = scores.find((score) => score.userId === userId);
   if (!playerScore) {
     res.status(404).send("User not found");

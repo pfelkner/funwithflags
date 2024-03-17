@@ -60,6 +60,7 @@ export class Game {
     this._countries = roundData.countries;
     this.options = roundData.options;
     this.country = roundData.country;
+    this.code = roundData.code;
   }
 
   getRoundData = () => {
