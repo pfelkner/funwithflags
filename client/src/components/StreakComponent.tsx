@@ -1,10 +1,11 @@
 // MyComponent.js
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
 import { green, red, blue, yellow } from "@mui/material/colors";
 import axios from "axios";
 import useUser from "../context/_UserContext";
+import UserContext from "../context/UserContext";
 
 interface StreakComponentProps {
   streakCount: number;
@@ -15,10 +16,11 @@ interface StreakComponentProps {
 const StreakComponent = ({ streakCount }:StreakComponentProps ) => {
   // const [streakCount, setStreakcount] = useState(0);
   const [highestStreak, setHighestStreak] = useState(0);
-  const userContext = useUser();
+  // const userContext = useUser();
+  const { user } : any = useContext(UserContext);
 
 useEffect(() => {
-  const userId = userContext!.user.id;
+  const userId = user.id;
   axios
     .get(`http://localhost:8080/score/${userId}`)
     .then((response) => {
@@ -33,7 +35,7 @@ useEffect(() => {
   useEffect(() => {
       console.log('Unmounting StreakComponent', highestStreak, streakCount);
       axios.post('http://localhost:8080/score/update', {
-        userId: userContext!.user.id,
+        userId: user.id,
         highestStreak: streakCount,
       })
         .then(response => {

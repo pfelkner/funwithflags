@@ -48,7 +48,6 @@ const GuessComponent = ({ buttonLabels, onClick, solution }: GuessComponentProps
                 </Button>
               </Grid>
             ))}
-                    <Button variant="contained" color="primary" onClick={home}/>
         </Grid>
 
       ) : (
