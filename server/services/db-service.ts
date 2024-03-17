@@ -1,66 +1,94 @@
-import { PrismaClient, Score, User } from "@prisma/client";
+import { createClient } from "@supabase/supabase-js";
+import { Database } from "../src/supabase";
 
-const prisma = new PrismaClient();
+export type UserEntity = Database["public"]["Tables"]["User"]["Row"];
+export type ScoreEntity = Database["public"]["Tables"]["Score"]["Row"];
 
-export const getUsers = async (): Promise<User[]> => {
-  return await prisma.user.findMany();
+const supabase = createClient<Database>(
+  "https://ahpnipoaaigjjhgaglyp.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFocG5pcG9hYWlnampoZ2FnbHlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA1OTI5MzIsImV4cCI6MjAyNjE2ODkzMn0.imfhz8Ip_pJGDPB9W_t5hPO1w-nDRf9u5nyB0Gvuc4M"
+);
+
+export const getUsers = async (): Promise<UserEntity[]> => {
+  const { data, error } = await supabase.from("User").select();
+
+  if (error) {
+    console.error("getUsers:Error fetching data:", error);
+    throw error;
+  }
+  return data;
 };
 
-export const getUserById = async (id: number): Promise<User | null> => {
-  return await prisma.user.findUnique({
-    where: {
-      id,
-    },
-  });
+// TODO: write generic helper function to get user by field (handle error, get first element)
+
+export const getUserById = async (id: number): Promise<any> => {
+  const { data, error } = await supabase.from("User").select().eq("id", id);
+
+  if (error || data.length != 1) throw error;
+  return data[0];
 };
 
-export const getUserByName = async (name: string): Promise<User | null> => {
-  return await prisma.user.findFirst({
-    where: {
-      name,
-    },
-  });
+export const getUserByName = async (name: string): Promise<any> => {
+  const { data, error } = await supabase.from("User").select().eq("name", name);
+  if (error || data.length != 1) throw error;
+  return data[0];
 };
 
 export const createUser = async (
   name: string,
   password: string
-): Promise<User> => {
-  return await prisma.user.create({
-    data: {
-      name,
-      password,
-    },
-  });
+): Promise<any> => {
+  const { data: userData, error: userError } = await supabase
+    .from("User")
+    .insert([{ name, password }]);
+
+  if (userError || !userData) throw userError;
+  const newUser: UserEntity = userData[0];
+  const { data: scoreData, error: scoreError } = await supabase
+    .from("Score")
+    .insert([{ userId: newUser.id, highestStreak: 0 }]);
+
+  if (scoreError) throw scoreError;
 };
 
-// Add more functions for other operations as needed
-export const getScores = async (): Promise<Score[]> => {
-  return await prisma.score.findMany();
+export const getScores = async (): Promise<ScoreEntity[]> => {
+  const { data, error } = await supabase.from("Score").select();
+  if (error) throw error;
+
+  return data;
 };
 
 export const getPlayerScore = async (userId: number) => {
-  const score = await prisma.score.findFirst({
-    where: { userId: userId },
-  });
-  if (!score) {
-    return await prisma.score.create({
-      data: {
-        userId: userId,
-        highestStreak: 0,
-      },
-    });
+  try {
+    const { data, error } = await supabase
+      .from("Score")
+      .select()
+      .eq("userId", userId);
+    if (error || data.length != 1) throw error;
+    return data[0];
+  } catch (error) {
+    console.error("getPlayerScore:Error fetching data:", error);
+    throw error;
   }
-  return score;
 };
 
 export const updatePlayerScore = async (
   userId: number,
   newScore: number
-): Promise<Score> => {
-  const updatedScore = await prisma.score.update({
-    where: { userId: userId },
-    data: { highestStreak: newScore },
-  });
-  return updatedScore;
+): Promise<void> => {
+  console.log("update:", userId, newScore);
+  try {
+    const { data, error } = await supabase
+      .from("Score")
+      .update({ highestStreak: newScore })
+      .eq("userId", userId);
+
+    if (error) throw error;
+    // if (!data) throw new Error("No data returned from update operation");
+
+    // return data[0];
+  } catch (error) {
+    console.error("updatePlayerScore:Error fetching data:", error);
+    throw error;
+  }
 };

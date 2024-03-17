@@ -1,8 +1,14 @@
-import { PrismaClient, User } from "@prisma/client";
-import express, { Router } from "express";
+import { Router } from "express";
 import { createUser, getUserByName, getUsers } from "../services/db-service";
 
 const router = Router();
+
+interface User {
+  created_at: string;
+  id: string;
+  name: string;
+  password: string;
+}
 
 router.post("/signin", async (req, res) => {
   const userName = req.body.name;
@@ -16,7 +22,6 @@ router.post("/signin", async (req, res) => {
     return;
   }
 
-  console.log("return user", user);
   res.json(user);
 });
 
